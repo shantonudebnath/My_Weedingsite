@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Invitation Generator — Shantonu & Sonchita</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #c9a96e; --gold-dark: #8b6530; --gold-light: #e8d5b0;
+  --cream: #faf6f0; --warm: #f0e8dc; --dark: #2c1a18;
+  --text: #3a2a24; --light: #7a6560; --rose: #b8706a;
+}
+
+/* ══════════ FORM PAGE ══════════ */
+body { font-family: 'Lato', sans-serif; background: #1a0f0d; min-height: 100vh; }
+
+#form-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(160deg, #0a0604 0%, #2c1a18 40%, #5c3832 100%);
+}
+
+.form-card {
+  width: 100%; max-width: 560px;
+  background: var(--cream);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+}
+
+.form-header {
+  background: var(--dark);
+  padding: 32px 40px 28px;
+  text-align: center;
+  position: relative;
+}
+.form-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--gold);
+}
+.form-header .couple {
+  font-family: 'Great Vibes', cursive;
+  font-size: 40px; color: #fff; line-height: 1;
+  margin-bottom: 8px;
+}
+.form-header .event-info {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold-light);
+}
+.form-header .tag {
+  display: inline-block; margin-top: 14px;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); border: 1px solid rgba(201,169,110,0.4);
+  padding: 5px 16px; border-radius: 20px;
+}
+
+.form-body { padding: 36px 40px 40px; }
+
+.form-intro {
+  font-size: 13px; color: var(--light); line-height: 1.7;
+  margin-bottom: 28px; text-align: center;
+  font-style: italic; font-family: 'Playfair Display', serif;
+}
+
+.field-group { margin-bottom: 18px; }
+.field-group label {
+  display: block; font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold-dark);
+  font-weight: 700; margin-bottom: 7px;
+}
+.field-group input, .field-group select {
+  width: 100%; padding: 12px 16px;
+  border: 1px solid #e0d4c8; border-radius: 8px;
+  background: #fff; font-family: 'Lato', sans-serif;
+  font-size: 14px; color: var(--text);
+  outline: none; transition: border 0.3s;
+  appearance: none;
+}
+.field-group input:focus, .field-group select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,169,110,0.15);
+}
+.field-group input::placeholder { color: #bbb; font-style: italic; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.gender-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.gender-btn {
+  padding: 11px; border: 1px solid #e0d4c8; border-radius: 8px;
+  text-align: center; cursor: pointer; transition: all 0.3s;
+  font-size: 12px; color: var(--light); background: #fff;
+  font-family: 'Lato', sans-serif;
+}
+.gender-btn.active { border-color: var(--gold); background: rgba(201,169,110,0.1); color: var(--gold-dark); font-weight: 700; }
+
+.generate-btn {
+  width: 100%; padding: 15px;
+  background: var(--dark); color: var(--gold-light);
+  border: none; border-radius: 8px;
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  cursor: pointer; font-family: 'Lato', sans-serif;
+  transition: all 0.4s; margin-top: 8px;
+  position: relative; overflow: hidden;
+}
+.generate-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold); transform: translateX(-101%); transition: transform 0.4s;
+}
+.generate-btn:hover::before { transform: translateX(0); }
+.generate-btn span { position: relative; z-index: 1; }
+.generate-btn:hover span { color: var(--dark); }
+
+.error-msg {
+  color: var(--rose); font-size: 11px; margin-top: 6px;
+  display: none; font-style: italic;
+}
+
+/* ══════════ LETTER PAGE ══════════ */
+#letter-page { display: none; background: #d0c8c0; padding: 40px 20px; min-height: 100vh; }
+
+.letter-controls {
+  max-width: 794px; margin: 0 auto 20px;
+  display: flex; gap: 12px; justify-content: flex-end;
+}
+.ctrl-btn {
+  padding: 10px 24px; border-radius: 30px;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; font-family: 'Lato', sans-serif;
+  transition: all 0.3s; border: 1px solid;
+}
+.btn-back { background: transparent; border-color: var(--dark); color: var(--dark); }
+.btn-back:hover { background: var(--dark); color: #fff; }
+.btn-print { background: var(--dark); border-color: var(--dark); color: var(--gold-light); }
+.btn-print:hover { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+
+/* ══════════ LETTER STYLES ══════════ */
+.letter {
+  width: 210mm; min-height: 297mm;
+  background: var(--cream);
+  position: relative;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column;
+  margin: 0 auto;
+}
+.letter::before {
+  content: ''; position: absolute;
+  left: 0; top: 28mm; bottom: 14mm; width: 4mm;
+  background: var(--gold);
+}
+.letter::after {
+  content: ''; position: absolute;
+  right: 0; top: 28mm; bottom: 14mm; width: 4mm;
+  background: var(--gold);
+}
+.inner-border {
+  position: absolute;
+  top: 30mm; left: 8mm; right: 8mm; bottom: 15mm;
+  border: 0.4px solid var(--gold); pointer-events: none;
+}
+
+.letter-header {
+  background: var(--dark); height: 28mm;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+}
+.letter-header::after {
+  content: ''; position: absolute; bottom: -2mm;
+  left: 0; right: 0; height: 2mm; background: var(--gold);
+}
+.lh-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: 36px; color: #fff; line-height: 1; margin-bottom: 6px;
+}
+.lh-sub {
+  font-size: 9px; letter-spacing: 2.5px;
+  color: var(--gold-light); text-transform: uppercase;
+}
+
+.letter-body { flex: 1; padding: 10mm 16mm 12mm; }
+
+.doc-title { text-align: center; margin-top: 6mm; margin-bottom: 2mm; }
+.doc-title h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; font-weight: 700; color: var(--dark);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin: 5px 0 6mm;
+}
+.orn-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.7; }
+.orn-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+.orn-dot { width: 3px; height: 3px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+
+.meta-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 6mm;
+}
+.meta-row span { font-size: 10px; color: var(--light); font-family: 'Lato', sans-serif; }
+
+.subject-line {
+  font-size: 10.5px; font-weight: 700; color: var(--dark);
+  padding-bottom: 4px; border-bottom: 0.5px solid var(--gold);
+  margin-bottom: 6mm;
+}
+
+.salutation {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 13px; color: var(--dark); margin-bottom: 7mm;
+}
+
+.body-para {
+  font-size: 11.5px; line-height: 2; color: var(--text);
+  text-align: justify; margin-bottom: 6mm;
+  font-family: 'Lato', sans-serif; font-weight: 300;
+}
+.body-para strong { font-weight: 700; color: var(--dark); }
+
+.details-box {
+  background: var(--warm); border: 0.8px solid var(--gold);
+  border-radius: 6px; padding: 6mm 6mm 6mm 10mm;
+  margin: 7mm 0 8mm; position: relative; overflow: hidden;
+}
+.details-box::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--gold); border-radius: 6px 0 0 6px;
+}
+.det-title {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dark); margin-bottom: 5mm;
+}
+.det-grid { display: grid; grid-template-columns: 26mm 1fr; gap: 5px 0; }
+.det-label { font-size: 10px; font-weight: 700; color: var(--gold-dark); }
+.det-value { font-size: 10px; color: var(--text); }
+
+.sig-area {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10mm; margin-top: 8mm; align-items: end;
+}
+.sig-left p { font-size: 10.5px; font-weight: 700; color: var(--dark); margin-bottom: 4mm; }
+.sig-line { height: 1px; background: var(--dark); width: 55mm; margin-bottom: 3mm; }
+.sig-name { font-family: 'Great Vibes', cursive; font-size: 34px; color: var(--gold-dark); margin-bottom: 2mm; display: block; }
+.sig-details { font-size: 9.5px; color: var(--light); line-height: 1.9; }
+
+.seal-box {
+  border: 0.6px solid var(--gold); border-radius: 6px;
+  height: 32mm; display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  padding: 5mm; background: #fff;
+}
+.seal-top { font-size: 8.5px; color: var(--light); }
+.seal-nid { font-size: 8px; font-weight: 700; color: var(--gold-dark); letter-spacing: 1px; }
+
+.letter-footer {
+  background: var(--dark); height: 14mm;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+}
+.letter-footer::before {
+  content: ''; position: absolute; top: -1.5mm;
+  left: 0; right: 0; height: 1.5mm; background: var(--gold);
+}
+.letter-footer p { font-size: 7px; color: var(--gold-light); letter-spacing: 1.5px; }
+
+/* ══════════ PRINT ══════════ */
+@media print {
+  body { background: none; }
+  #form-page { display: none !important; }
+  #letter-page { display: block !important; background: none; padding: 0; }
+  .letter-controls { display: none; }
+  .letter { box-shadow: none; width: 210mm; min-height: 297mm; margin: 0; }
+  @page { size: A4; margin: 0; }
+}
+
+@media (max-width: 600px) {
+  .form-body { padding: 24px 20px 28px; }
+  .form-header { padding: 24px 20px 20px; }
+  .field-row { grid-template-columns: 1fr; }
+  .letter { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ FORM PAGE ══════════ -->
+<div id="form-page">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="couple">Shantonu &amp; Sonchita</div>
+      <div class="event-info">3rd May 2026 &nbsp;•&nbsp; Mirzapur, Pakundia, Kishoreganj</div>
+      <div class="tag">Invitation Letter Generator</div>
+    </div>
+    <div class="form-body">
+      <p class="form-intro">Please fill in your details below to generate your personalized wedding invitation letter.</p>
+
+      <!-- GUEST NAME -->
+      <div class="field-group">
+        <label>Your Full Name *</label>
+        <input type="text" id="guest-name" placeholder="e.g. Rahul Sharma">
+        <div class="error-msg" id="err-name">Please enter your full name.</div>
+      </div>
+
+      <!-- GENDER -->
+      <div class="field-group">
+        <label>Title / Gender *</label>
+      </div>
+      <div class="gender-row">
+        <div class="gender-btn active" id="g-mr" onclick="selectGender('Mr.')">Mr. (Male)</div>
+        <div class="gender-btn" id="g-ms" onclick="selectGender('Ms.')">Ms. / Mrs. (Female)</div>
+      </div>
+
+      <!-- FATHER NAME -->
+      <div class="field-group">
+        <label>Your Father's Name *</label>
+        <input type="text" id="father-name" placeholder="e.g. Ramesh Sharma">
+        <div class="error-msg" id="err-father">Please enter your father's name.</div>
+      </div>
+
+      <!-- FROM COUNTRY / CITY -->
+      <div class="field-row">
+        <div class="field-group">
+          <label>Country *</label>
+          <input type="text" id="guest-country" placeholder="e.g. India">
+          <div class="error-msg" id="err-country">Please enter your country.</div>
+        </div>
+        <div class="field-group">
+          <label>City</label>
+          <input type="text" id="guest-city" placeholder="e.g. Kolkata">
+        </div>
+      </div>
+
+      <!-- PASSPORT -->
+      <div class="field-group">
+        <label>Passport Number (Optional)</label>
+        <input type="text" id="passport-no" placeholder="e.g. A1234567">
+      </div>
+
+      <button class="generate-btn" onclick="generateLetter()">
+        <span>✦ &nbsp; Generate My Invitation Letter</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LETTER PAGE ══════════ -->
+<div id="letter-page">
+  <div class="letter-controls">
+    <button class="ctrl-btn btn-back" onclick="goBack()">← Back</button>
+    <button class="ctrl-btn btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+
+  <div class="letter">
+    <div class="inner-border"></div>
+
+    <!-- LETTER HEADER -->
+    <div class="letter-header">
+      <div class="lh-name">Shantonu &amp; Sonchita</div>
+      <div class="lh-sub">Wedding Celebration &nbsp;•&nbsp; 3rd May 2026 &nbsp;•&nbsp; Mirzapur, Pakundia, Kishoreganj</div>
+    </div>
+
+    <!-- LETTER BODY -->
+    <div class="letter-body">
+      <div class="doc-title"><h2>Wedding Invitation Letter</h2></div>
+      <div class="ornament">
+        <div class="orn-line"></div>
+        <div class="orn-dot"></div>
+        <div class="orn-diamond"></div>
+        <div class="orn-dot"></div>
+        <div class="orn-line"></div>
+      </div>
+
+      <div class="meta-row">
+        <span id="l-date">Date: —</span>
+        <span>Ref: WED/2026/INV</span>
+      </div>
+
+      <div class="subject-line">
+        Subject: &nbsp; Invitation Letter for Wedding Ceremony — Visa Support
+      </div>
+
+      <div class="salutation">To Whomsoever It May Concern,</div>
+
+      <p class="body-para" id="l-para1"></p>
+      <p class="body-para" id="l-para2"></p>
+      <p class="body-para" id="l-para3"></p>
+      <p class="body-para" id="l-para4"></p>
+
+      <!-- HOST DETAILS BOX -->
+      <div class="details-box">
+        <div class="det-title">Host / Inviting Person Details</div>
+        <div class="det-grid">
+          <span class="det-label">Name:</span>
+          <span class="det-value">Shantonu Debnath</span>
+          <span class="det-label">Father's Name:</span>
+          <span class="det-value">Shital Debnath</span>
+          <span class="det-label">Address:</span>
+          <span class="det-value">Mirzapur, Pakundia, Kishoreganj, Bangladesh</span>
+          <span class="det-label">NID No.:</span>
+          <span class="det-value">2409718422</span>
+          <span class="det-label">Phone:</span>
+          <span class="det-value">+880 1796689888</span>
+          <span class="det-label">Email:</span>
+          <span class="det-value">shantonudebnath@gmail.com</span>
+        </div>
+      </div>
+
+      <!-- SIGNATURE -->
+      <div class="sig-area">
+        <div class="sig-left">
+          <p>Yours Sincerely,</p>
+          <span class="sig-name">Shantonu Debnath</span>
+          <div class="sig-details">
+            Shantonu Debnath<br>
+            Mirzapur, Pakundia, Kishoreganj, Bangladesh<br>
+            +880 1796689888 &nbsp;|&nbsp; shantonudebnath@gmail.com
+          </div>
+        </div>
+        
+        
+        
+        <div class="seal-box">
+          <span class="seal-top">Signature</span>
+          <img src="img/sign.jpg" alt="Signature" style="width:100%;max-height:16mm;object-fit:contain;padding:1px;">
+          <span class="seal-nid">NID: 2409718422</span>
+        </div>
+      </div>
+    </div>
+
+
+
+    
+    <!-- LETTER FOOTER -->
+    <div class="letter-footer">
+      <p>Shantonu Debnath &nbsp;•&nbsp; Mirzapur, Pakundia, Kishoreganj &nbsp;•&nbsp; +880 1796689888 &nbsp;•&nbsp; shantonudebnath@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedGender = 'Mr.';
+
+  function selectGender(g) {
+    selectedGender = g;
+    document.getElementById('g-mr').classList.toggle('active', g === 'Mr.');
+    document.getElementById('g-ms').classList.toggle('active', g === 'Ms.');
+  }
+
+  function generateLetter() {
+    // — Validate
+    let valid = true;
+    const name    = document.getElementById('guest-name').value.trim();
+    const father  = document.getElementById('father-name').value.trim();
+    const country = document.getElementById('guest-country').value.trim();
+    const city    = document.getElementById('guest-city').value.trim();
+    const passport = document.getElementById('passport-no').value.trim();
+
+    document.getElementById('err-name').style.display   = name    ? 'none' : 'block';
+    document.getElementById('err-father').style.display = father  ? 'none' : 'block';
+    document.getElementById('err-country').style.display= country ? 'none' : 'block';
+    if (!name || !father || !country) return;
+
+    // — Build location string
+    const fromLocation = city ? `${city}, ${country}` : country;
+
+    // — Today's date
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+    document.getElementById('l-date').textContent = 'Date: ' + dateStr;
+
+    // — Paragraph 1
+    document.getElementById('l-para1').innerHTML =
+      `I, <strong>Shantonu Debnath</strong>, son of <strong>Shital Debnath</strong>, residing at
+      <strong>Mirzapur, Pakundia, Kishoreganj, Bangladesh</strong>, hereby extend this formal
+      invitation letter to confirm that <strong>${selectedGender} ${name}</strong>,
+      son/daughter of <strong>${father}</strong>, currently residing in
+      <strong>${fromLocation}</strong>, has been cordially invited to attend our wedding ceremony.`;
+
+    // — Paragraph 2
+    document.getElementById('l-para2').innerHTML =
+      `The wedding celebration will be held at our <strong>family residence</strong>,
+      Mirzapur, Pakundia, Kishoreganj, Bangladesh, on <strong>3rd May 2026</strong>.
+      This is a joyous and auspicious occasion for our family, and we sincerely look forward
+      to the presence of our esteemed guest from ${country} to share in our celebration.`;
+
+    // — Paragraph 3
+    const passportLine = passport
+      ? ` bearing Passport No. <strong>${passport}</strong>,`
+      : '';
+    document.getElementById('l-para3').innerHTML =
+      `I kindly request the concerned embassy or consulate authority to consider issuing the
+      necessary visa to <strong>${selectedGender} ${name}</strong>${passportLine} to enable
+      them to travel to Bangladesh and attend this special occasion. I assure you that all
+      expenses incurred during their stay in Bangladesh shall be borne by me, and the guest
+      shall return to <strong>${country}</strong> upon the conclusion of the event.`;
+
+    // — Paragraph 4
+    document.getElementById('l-para4').innerHTML =
+      `I take full responsibility for the invited guest during their stay in Bangladesh and
+      confirm that <strong>${selectedGender} ${name}</strong> is attending solely for the
+      purpose of participating in our wedding ceremony. I kindly request your favourable
+      consideration of this visa application.`;
+
+    // — Show letter page
+    document.getElementById('form-page').style.display = 'none';
+    document.getElementById('letter-page').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function goBack() {
+    document.getElementById('letter-page').style.display = 'none';
+    document.getElementById('form-page').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
